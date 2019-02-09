@@ -1,0 +1,4 @@
+FROM concourse/concourse:4.2.2
+
+COPY keys/web /concourse-keys
+CMD ["web"]
