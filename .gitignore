@@ -3,3 +3,5 @@ bin/*
 !bin/.gitkeep
 .DS_Store
 .envrc
+.env
+load_rancher_env.sh
