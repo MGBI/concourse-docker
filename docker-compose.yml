@@ -16,7 +16,7 @@ services:
     depends_on: [concourse-db]
     ports:
     - 8080:8080
-    expose: 
+    expose:
     - 2222
     environment:
     - CONCOURSE_POSTGRES_HOST=concourse-db
@@ -38,4 +38,8 @@ services:
     environment:
     - CONCOURSE_TSA_HOST=concourse-web:2222
     - CONCOURSE_GARDEN_NETWORK
+    - CONCOURSE_BAGGAGECLAIM_DRIVER=overlay
+    - CONCOURSE_LOG_LEVEL=error
+    - CONCOURSE_GARDEN_LOG_LEVEL=error
+    - CONCOURSE_BAGGAGECLAIM_LOG_LEVEL=info
     scale: 4
