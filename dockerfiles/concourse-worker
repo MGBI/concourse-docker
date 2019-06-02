@@ -1,4 +1,5 @@
-FROM concourse/concourse:4.2.3
+ARG CONCOURSE_VERSION
+FROM concourse/concourse:$CONCOURSE_VERSION
 
 COPY keys/worker /concourse-keys
 CMD ["worker"]
