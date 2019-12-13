@@ -1,0 +1,27 @@
+# This file merged with docker-compose.yml creates a production-like
+# configuration for deploying the Rancher stack.
+# TODO: Rancher Secrets
+# Remember to start Rancher Secrets from Catalog before the deployment!
+version: '2'
+
+services:
+  db:
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:host_label: concourse=true
+    restart: on-failure
+
+  web:
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:host_label: concourse=true
+    restart: on-failure
+
+  worker:
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:host_label: concourse=true
+    restart: on-failure
