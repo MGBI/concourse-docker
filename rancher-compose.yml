@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  lb:
+    lb_config:
+      certs:
+        - ${DOMAIN}
+      default_cert: ${DOMAIN}
+      port_rules:
+      - protocol: http
+        source_port: 80
+        target_port: 80
+        path: /.well-known/acme-challenge/
+        service: letsencrypt
+      - protocol: http
+        source_port: 80
+        target_port: 8080
+        service: web
+      - protocol: https
+        source_port: 443
+        target_port: 8080
+        service: web
