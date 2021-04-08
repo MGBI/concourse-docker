@@ -12,11 +12,14 @@ services:
         target_port: 80
         path: /.well-known/acme-challenge/
         service: letsencrypt
-      - protocol: http
-        source_port: 80
-        target_port: 8080
-        service: web
       - protocol: https
         source_port: 443
         target_port: 8080
         service: web
+      # This custom config will merge the redirect setting with the
+      # default Rancher haproxy.cfg frontend definition and set up permanent
+      # ("301") redirects to HTTPS for all other HTTP traffic.
+      config: |-
+        frontend 80
+          acl 80_well_known_acme_challenge__path path_beg -i /.well-known/acme-challenge/
+          redirect scheme https code 301 if !80_well_known_acme_challenge__path !{ ssl_fc }
