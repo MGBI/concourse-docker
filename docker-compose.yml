@@ -5,8 +5,8 @@ services:
     image: postgres
     environment:
     - POSTGRES_DB=concourse
-    - POSTGRES_PASSWORD=${CONCOURSE_POSTGRES_PASSWORD}
     - POSTGRES_USER=${CONCOURSE_POSTGRES_USER}
+    - POSTGRES_PASSWORD=${CONCOURSE_POSTGRES_PASSWORD}
     - PGDATA=/database
 
   web:
