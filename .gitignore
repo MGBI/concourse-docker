@@ -1,8 +1,5 @@
 keys/*
-bin/*
-!bin/.gitkeep
 .DS_Store
-.envrc
 .env
 rancher_cli.env
 load_rancher_env.sh
