@@ -43,11 +43,11 @@ services:
     - /var/lib/rancher:/var/lib/rancher
     labels:
       # Put let's encrypt containers on hosts with label sentry=true
-      io.rancher.scheduler.affinity:host_label: concourse=true
+      io.rancher.scheduler.affinity:host_label: registry=true
       io.rancher.container.agent.role: environment
       io.rancher.container.create_agent: 'true'
 
-  db:
+  postgres:
     <<: *concourse-member
 
   web:

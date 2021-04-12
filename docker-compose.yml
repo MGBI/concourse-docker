@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  db:
+  postgres:
     image: postgres
     environment:
     - POSTGRES_DB=concourse
@@ -12,14 +12,13 @@ services:
   web:
     image: ${PRIVATE_REPOSITORY}/concourse-web:${CONCOURSE_VERSION}
     command: web
-    links: [db]
-    depends_on: [db]
+    depends_on: [postgres]
     ports:
     - 8080:8080
     expose:
     - 2222
     environment:
-    - CONCOURSE_POSTGRES_HOST=db
+    - CONCOURSE_POSTGRES_HOST=postgres
     - CONCOURSE_POSTGRES_USER=${CONCOURSE_POSTGRES_USER}
     - CONCOURSE_POSTGRES_PASSWORD=${CONCOURSE_POSTGRES_PASSWORD}
     - CONCOURSE_POSTGRES_DATABASE=concourse
@@ -38,7 +37,6 @@ services:
     image: ${PRIVATE_REPOSITORY}/concourse-worker:${CONCOURSE_VERSION}
     command: worker
     privileged: true
-    links: [web]
     depends_on: [web]
     environment:
     - CONCOURSE_TSA_HOST=web:2222
