@@ -24,6 +24,7 @@ services:
       # Allow to interact with the Rancher API
       io.rancher.container.create_agent: 'true'
       io.rancher.container.agent.role: environmentAdmin
+    restart: on-failure
 
   letsencrypt:
     image: mgbi/rancher-letsencrypt:v1.0.0
@@ -42,8 +43,8 @@ services:
     volumes:
     - /var/lib/rancher:/var/lib/rancher
     labels:
-      # Put let's encrypt containers on hosts with label sentry=true
-      io.rancher.scheduler.affinity:host_label: registry=true
+      # Put let's encrypt containers on hosts with label concourse=true
+      io.rancher.scheduler.affinity:host_label: concourse=true
       io.rancher.container.agent.role: environment
       io.rancher.container.create_agent: 'true'
 
