@@ -4,6 +4,14 @@
 # Remember to start Rancher Secrets from Catalog before the deployment!
 version: '2'
 
+x-concourse-member:
+  &concourse-member
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:host_label: concourse=true
+    restart: on-failure
+
 services:
   lb:
     image: rancher/lb-service-haproxy
@@ -16,6 +24,7 @@ services:
       # Allow to interact with the Rancher API
       io.rancher.container.create_agent: 'true'
       io.rancher.container.agent.role: environmentAdmin
+    restart: on-failure
 
   letsencrypt:
     image: mgbi/rancher-letsencrypt:v1.0.0
@@ -24,38 +33,26 @@ services:
       CERT_NAME: ${DOMAIN}
       DNS_RESOLVERS: 8.8.8.8:53,8.8.4.4:53
       DOMAINS: ${DOMAIN}
-      EMAIL: ${ADMIN_EMAIL}
+      EMAIL: ${LETSENCRYPT_EMAIL}
       EULA: 'Yes'
       PROVIDER: HTTP
       PUBLIC_KEY_TYPE: RSA-2048
-      RENEWAL_PERIOD_DAYS: '20'
+      RENEWAL_PERIOD_DAYS: '21'
       RENEWAL_TIME: '0'
       RUN_ONCE: 'false'
     volumes:
     - /var/lib/rancher:/var/lib/rancher
     labels:
-      # Put let's encrypt containers on hosts with label sentry=true
+      # Put let's encrypt containers on hosts with label concourse=true
       io.rancher.scheduler.affinity:host_label: concourse=true
       io.rancher.container.agent.role: environment
       io.rancher.container.create_agent: 'true'
 
-  db:
-    labels:
-      io.rancher.container.pull_image: always
-      io.rancher.container.hostname_override: container_name
-      io.rancher.scheduler.affinity:host_label: concourse=true
-    restart: on-failure
+  postgres:
+    <<: *concourse-member
 
   web:
-    labels:
-      io.rancher.container.pull_image: always
-      io.rancher.container.hostname_override: container_name
-      io.rancher.scheduler.affinity:host_label: concourse=true
-    restart: on-failure
+    <<: *concourse-member
 
   worker:
-    labels:
-      io.rancher.container.pull_image: always
-      io.rancher.container.hostname_override: container_name
-      io.rancher.scheduler.affinity:host_label: concourse=true
-    restart: on-failure
+    <<: *concourse-member

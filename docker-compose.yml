@@ -1,25 +1,30 @@
 version: '2'
 
+volumes:
+  postgres-data:
+
 services:
-  db:
+  postgres:
     image: postgres
+    volumes:
+    - postgres-data:/var/lib/postgresql/data
     environment:
     - POSTGRES_DB=concourse
-    - POSTGRES_PASSWORD=${CONCOURSE_POSTGRES_PASSWORD}
     - POSTGRES_USER=${CONCOURSE_POSTGRES_USER}
-    - PGDATA=/database
+    - POSTGRES_PASSWORD=${CONCOURSE_POSTGRES_PASSWORD}
 
   web:
     image: ${PRIVATE_REPOSITORY}/concourse-web:${CONCOURSE_VERSION}
     command: web
-    links: [db]
-    depends_on: [db]
+    depends_on: [postgres]
+    links:
+    - postgres
     ports:
     - 8080:8080
     expose:
     - 2222
     environment:
-    - CONCOURSE_POSTGRES_HOST=db
+    - CONCOURSE_POSTGRES_HOST=postgres
     - CONCOURSE_POSTGRES_USER=${CONCOURSE_POSTGRES_USER}
     - CONCOURSE_POSTGRES_PASSWORD=${CONCOURSE_POSTGRES_PASSWORD}
     - CONCOURSE_POSTGRES_DATABASE=concourse
@@ -38,13 +43,18 @@ services:
     image: ${PRIVATE_REPOSITORY}/concourse-worker:${CONCOURSE_VERSION}
     command: worker
     privileged: true
-    links: [web]
     depends_on: [web]
+    links:
+    - web
     environment:
+    # default from 7.1.0
+    - CONCOURSE_RUNTIME=containerd
     - CONCOURSE_TSA_HOST=web:2222
-    - CONCOURSE_GARDEN_NETWORK
     - CONCOURSE_BAGGAGECLAIM_DRIVER=btrfs
     - CONCOURSE_LOG_LEVEL=error
-    - CONCOURSE_GARDEN_LOG_LEVEL=error
     - CONCOURSE_BAGGAGECLAIM_LOG_LEVEL=info
+    # default before 7.1.0
+    # - CONCOURSE_RUNTIME=guardian
+    # - CONCOURSE_GARDEN_NETWORK
+    # - CONCOURSE_GARDEN_LOG_LEVEL=error
     scale: 2
