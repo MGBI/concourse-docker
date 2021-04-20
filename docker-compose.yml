@@ -17,6 +17,8 @@ services:
     image: ${PRIVATE_REPOSITORY}/concourse-web:${CONCOURSE_VERSION}
     command: web
     depends_on: [postgres]
+    links:
+    - postgres
     ports:
     - 8080:8080
     expose:
@@ -42,6 +44,8 @@ services:
     command: worker
     privileged: true
     depends_on: [web]
+    links:
+    - web
     environment:
     # default from 7.1.0
     - CONCOURSE_RUNTIME=containerd
