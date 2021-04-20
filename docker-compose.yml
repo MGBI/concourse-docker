@@ -57,4 +57,5 @@ services:
     # - CONCOURSE_RUNTIME=guardian
     # - CONCOURSE_GARDEN_NETWORK
     # - CONCOURSE_GARDEN_LOG_LEVEL=error
-    scale: 2
+    # do not scale the workers to run tasks always on the same worker
+    scale: 1
